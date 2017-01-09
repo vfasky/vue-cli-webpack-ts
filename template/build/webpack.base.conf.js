@@ -1,6 +1,7 @@
 var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var projectRoot = path.resolve(__dirname, '../')
 
 var env = process.env.NODE_ENV
@@ -12,7 +13,7 @@ var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.ts'
   },
   output: {
     path: config.build.assetsRoot,
@@ -20,7 +21,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['', '.js', '.vue', '.json'],
+    extensions: ['', '.js', '.vue', '.ts', '.json'],
     fallback: [path.join(__dirname, '../node_modules')],
     alias: {
       {{#if_eq build "standalone"}}
@@ -35,38 +36,15 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')]
   },
   module: {
-    {{#lint}}
-    preLoaders: [
-      {
-        test: /\.vue$/,
-        loader: 'eslint',
-        include: [
-          path.join(projectRoot, 'src')
-        ],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.js$/,
-        loader: 'eslint',
-        include: [
-          path.join(projectRoot, 'src')
-        ],
-        exclude: /node_modules/
-      }
-    ],
-    {{/lint}}
+    
     loaders: [
       {
         test: /\.vue$/,
         loader: 'vue'
       },
       {
-        test: /\.js$/,
-        loader: 'babel',
-        include: [
-          path.join(projectRoot, 'src')
-        ],
-        exclude: /node_modules/
+        test: /\.ts$/,
+        loader: 'ts-loader'
       },
       {
         test: /\.json$/,
@@ -81,6 +59,21 @@ module.exports = {
         }
       },
       {
+        test: /\.html$/,
+        loader: "html"
+      },
+      {
+        test: /\.scss$/,
+        include: [
+          path.join(__dirname, '../src'),
+        ],
+        loader: ExtractTextPlugin.extract([
+          'css',
+          'postcss',
+          'sass?config=sassConfig'
+        ])
+      },
+      {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url',
         query: {
@@ -90,11 +83,37 @@ module.exports = {
       }
     ]
   },
-  {{#lint}}
-  eslint: {
-    formatter: require('eslint-friendly-formatter')
+  plugins: [
+    new ExtractTextPlugin('style/[name].css', {
+        allChunks: true
+    })
+  ],
+  ts: {
+    experimentalDecorators: true,
+    logLevel: 'error',
+    silent: true,
+    transpileOnly: true
   },
-  {{/lint}}
+  postcss: function () {
+    return [
+      require('autoprefixer')({
+        browsers: ['last 2 versions']
+      }),
+      require('postcss-assets')({
+        relative: true,
+        loadPaths: [path.join(__dirname, '../src/assets')]
+      }),
+      require('postcss-at2x')()
+    ]
+  },
+  sassConfig: {
+    includePaths: [
+      path.join(__dirname, '../src/sass'),
+      require('bourbon').includePaths,
+      path.join(__dirname, '../node_modules')
+    ],
+    outputStyle: 'compressed'
+  },
   vue: {
     loaders: utils.cssLoaders({ sourceMap: useCssSourceMap }),
     postcss: [
