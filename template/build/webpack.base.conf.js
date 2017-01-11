@@ -11,6 +11,8 @@ var cssSourceMapDev = (env === 'development' && config.dev.cssSourceMap)
 var cssSourceMapProd = (env === 'production' && config.build.productionSourceMap)
 var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
+var appEnv = process.env.ENV || 'dev'
+
 module.exports = {
   entry: {
     app: './src/main.ts'
@@ -23,13 +25,16 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.vue', '.ts', '.json'],
     fallback: [path.join(__dirname, '../node_modules')],
+    modulesDirectories: [
+      path.join(__dirname, '../node_modules'),
+      path.join(__dirname, '../src'),
+    ],
     alias: {
-      {{#if_eq build "standalone"}}
       'vue$': 'vue/dist/vue.common.js',
-      {{/if_eq}}
       'src': path.resolve(__dirname, '../src'),
       'assets': path.resolve(__dirname, '../src/assets'),
-      'components': path.resolve(__dirname, '../src/components')
+      'components': path.resolve(__dirname, '../src/components'),
+      'env': path.resolve(__dirname, '../src/config', appEnv)
     }
   },
   resolveLoader: {
@@ -71,6 +76,12 @@ module.exports = {
           'css',
           'postcss',
           'sass?config=sassConfig'
+        ])
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract([
+          'css'
         ])
       },
       {
