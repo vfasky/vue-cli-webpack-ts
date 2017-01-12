@@ -16,7 +16,6 @@
   "devDependencies": {
     "@types/fs-extra": "^0.0.37",
     "@types/vue-resource": "^0.9.31",
-    "@types/vue-router": "^0.7.28",
     "autoprefixer": "^6.4.0",
     "bourbon": "^4.2.7",
     "chalk": "^1.1.3",
