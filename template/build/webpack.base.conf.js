@@ -34,7 +34,8 @@ module.exports = {
       'src': path.resolve(__dirname, '../src'),
       'assets': path.resolve(__dirname, '../src/assets'),
       'components': path.resolve(__dirname, '../src/components'),
-      'env': path.resolve(__dirname, '../src/config', appEnv)
+      'env': path.resolve(__dirname, '../src/config', appEnv),
+      'svg': path.resolve(__dirname, '../static/svg/dist/svg')
     }
   },
   resolveLoader: {

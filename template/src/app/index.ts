@@ -5,6 +5,10 @@
 import * as Vue from 'vue'
 import * as VueRouter from 'vue-router'
 
+import 'svg'
+
+import 'common/components'
+
 import './app.scss'
 
 Vue.use(VueRouter)
