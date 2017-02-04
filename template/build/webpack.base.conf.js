@@ -41,7 +41,7 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')]
   },
   module: {
-    
+
     loaders: [
       {
         test: /\.vue$/,
@@ -113,8 +113,7 @@ module.exports = {
       require('postcss-assets')({
         relative: true,
         loadPaths: [path.join(__dirname, '../src/assets')]
-      }),
-      require('postcss-at2x')()
+      })
     ]
   },
   sassConfig: {
